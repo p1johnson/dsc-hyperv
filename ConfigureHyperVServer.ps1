@@ -1,9 +1,9 @@
-Configuration JumpServer {
+Configuration HyperVServer {
 
     Param ()
 
     #Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cChoco, GPRegistryPolicyDsc, NetworkingDsc
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, GPRegistryPolicyDsc, NetworkingDsc
 
     $Interface = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
     $InterfaceAlias = $($Interface.Name)
@@ -11,29 +11,6 @@ Configuration JumpServer {
     Node 'localhost'
 
     {
-       cChocoInstaller InstallChoco {
-            InstallDir = "C:\Choco"
-        }
-
-        cChocoPackageInstaller InstallFirefox {
-            Name      = 'firefox'
-            Ensure    = 'Present'
-            Params    = '/NoAutoUpdate'
-            DependsOn = '[cChocoInstaller]InstallChoco'
-        }
-
-        cChocoPackageInstaller InstallPutty {
-            Name      = 'putty.install'
-            Ensure    = 'Present'
-            DependsOn = '[cChocoInstaller]InstallChoco'
-        }
-
-        cChocoPackageInstaller InstallFileZilla {
-            Name      = 'filezilla'
-            Ensure    = 'Present'
-            DependsOn = '[cChocoInstaller]InstallChoco'
-        }
-        
         RegistryPolicyFile DisableServerManagerStart {
             Key        = 'Software\Policies\Microsoft\Windows\Server\ServerManager'
             TargetType = 'ComputerConfiguration'
@@ -67,11 +44,40 @@ Configuration JumpServer {
             Enabled = 'False'
         }
 
-        WindowsFeature RSAT
+        WindowsFeature Hyper-V
         {
-            Name = 'RSAT'
+            Name = 'Hyper-V'
             Ensure = 'Present'
-            IncludeAllSubFeature = $true
+        }
+
+        WindowsFeature Hyper-V-Tools
+        {
+            Name = 'Hyper-V-Tools'
+            Ensure = 'Present'
+        }
+
+        WindowsFeature Hyper-V-Powershell
+        {
+            Name = 'Hyper-V-Powershell'
+            Ensure = 'Present'
+        }
+
+        WindowsFeature DHCP
+        {
+            Name = 'DHCP'
+            Ensure = 'Present'
+        }
+
+        WindowsFeature RSAT-DHCP
+        {
+            Name = 'RSAT-DHCP'
+            Ensure = 'Present'
+        }
+
+        PendingReboot Reboot
+        {
+            Name = 'Reboot'
+            DependsOn = '[WindowsFeature]Hyper-V', '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
         }
     }
 

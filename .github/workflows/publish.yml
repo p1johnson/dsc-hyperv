@@ -2,7 +2,7 @@ name: publish
 on:
   push:
     branches: [main]
-    paths: [ConfigureJumpServer.ps1]
+    paths: [ConfigureHyperVServer.ps1]
 jobs:
   publish-module:
     runs-on: windows-latest
@@ -15,17 +15,17 @@ jobs:
       shell: pwsh
       run: |
         Set-PSRepository PSGallery -InstallationPolicy Trusted
-        Install-Module Az, PSDesiredStateConfiguration, cChoco, GPRegistryPolicyDsc, NetworkingDsc -AllowClobber
+        Install-Module Az, PSDesiredStateConfiguration, GPRegistryPolicyDsc, NetworkingDsc -AllowClobber
     - name: Publish module
       shell: pwsh
       run: |
-        Publish-AzVMDscConfiguration ConfigureJumpServer.ps1 -OutputArchivePath ConfigureJumpServer.zip -Force
+        Publish-AzVMDscConfiguration ConfigureJumpServer.ps1 -OutputArchivePath ConfigureHyperVServer.zip -Force
     - name: Commit module
       run: |
         git config --local user.email "39245689+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add ConfigureJumpServer.zip
-        git commit -m "Publish updated ConfigureJumpServer.zip file"
+        git add ConfigureHyperVServer.zip
+        git commit -m "Publish updated ConfigureHyperVServer.zip file"
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:

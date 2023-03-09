@@ -1,2 +1,2 @@
-# dsc-jumpserver
-PowerShell Desired State Configuration for configuring a jump server
+# dsc-hyperv
+PowerShell Desired State Configuration for configuring a hyper-v server
