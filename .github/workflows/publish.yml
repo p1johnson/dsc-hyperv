@@ -19,7 +19,7 @@ jobs:
     - name: Publish module
       shell: pwsh
       run: |
-        Publish-AzVMDscConfiguration ConfigureJumpServer.ps1 -OutputArchivePath ConfigureHyperVServer.zip -Force
+        Publish-AzVMDscConfiguration ConfigureHyperVServer.ps1 -OutputArchivePath ConfigureHyperVServer.zip -Force
     - name: Commit module
       run: |
         git config --local user.email "39245689+github-actions[bot]@users.noreply.github.com"
