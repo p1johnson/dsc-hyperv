@@ -54,7 +54,7 @@ Configuration HyperVServer {
         {
             Name = 'Hyper-V'
             Ensure = 'Present'
-            DependsOn = '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
+            DependsOn = '[NetConnectionProfile]SetPrivateInterface', '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
         }
 
         WindowsFeature Hyper-V-Tools
