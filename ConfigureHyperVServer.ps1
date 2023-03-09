@@ -54,6 +54,7 @@ Configuration HyperVServer {
         {
             Name = 'Hyper-V'
             Ensure = 'Present'
+            DependsOn = '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
         }
 
         WindowsFeature Hyper-V-Tools
@@ -83,7 +84,7 @@ Configuration HyperVServer {
         PendingReboot Reboot
         {
             Name = 'Reboot'
-            DependsOn = '[WindowsFeature]Hyper-V', '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
+            DependsOn = '[WindowsFeature]Hyper-V'
         }
     }
 
