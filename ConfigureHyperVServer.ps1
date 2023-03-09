@@ -3,7 +3,7 @@ Configuration HyperVServer {
     Param ()
 
     #Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, GPRegistryPolicyDsc, NetworkingDsc
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, GPRegistryPolicyDsc, NetworkingDsc, ComputerManagementDsc
 
     $Interface = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
     $InterfaceAlias = $($Interface.Name)
