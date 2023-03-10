@@ -5,8 +5,8 @@ Configuration HyperVServer {
     #Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
     Import-DscResource -ModuleName PSDesiredStateConfiguration, GPRegistryPolicyDsc, NetworkingDsc, ComputerManagementDsc
 
-    $Interface = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
-    $InterfaceAlias = $($Interface.Name)
+    #$Interface = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
+    #$InterfaceAlias = $($Interface.Name)
 
     Node 'localhost'
 
@@ -38,23 +38,23 @@ Configuration HyperVServer {
             DependsOn        = '[RegistryPolicyFile]DisableServerManagerStart','[RegistryPolicyFile]DisableNewNetworkPrompt'
         }
 
-        NetConnectionProfile SetPrivateInterface
-        {
-            InterfaceAlias   = $InterfaceAlias
-            NetworkCategory  = 'Private'
-        }
+        #NetConnectionProfile SetPrivateInterface
+        #{
+        #    InterfaceAlias   = $InterfaceAlias
+        #    NetworkCategory  = 'Private'
+        #}
         
-        FirewallProfile ConfigurePrivateFirewallProfile
-        {
-            Name = 'Private'
-            Enabled = 'False'
-        }
+        #FirewallProfile ConfigurePrivateFirewallProfile
+        #{
+        #    Name = 'Private'
+        #    Enabled = 'False'
+        #}
 
         WindowsFeature Hyper-V
         {
             Name = 'Hyper-V'
             Ensure = 'Present'
-            DependsOn = '[NetConnectionProfile]SetPrivateInterface', '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
+            DependsOn = '[WindowsFeature]Hyper-V-Tools', '[WindowsFeature]Hyper-V-Powershell', '[WindowsFeature]DHCP', '[WindowsFeature]RSAT-DHCP'
         }
 
         WindowsFeature Hyper-V-Tools
