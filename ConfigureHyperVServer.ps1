@@ -114,7 +114,7 @@ Configuration HyperVServer {
             SetScript = {
                 New-VMSwitch -Name $using:switchName -SwitchType Internal
                 New-NetNat -Name $switchName -InternalIPInterfaceAddressPrefix $using:natPrefix
-                $ifIndex = (Get-NetAdapter | Where-Object {$_.name -like "*$using.switchName)"}).ifIndex
+                $ifIndex = (Get-NetAdapter | Where-Object {$_.name -like "*$using:switchName)"}).ifIndex
                 New-NetIPAddress -IPAddress $using:natAddress -InterfaceIndex $ifIndex -PrefixLength $using:natPrefixLength
                 Add-DhcpServerV4Scope -Name "DHCP-$using:switchName" -StartRange $using:scopeStart -EndRange $using:scopeEnd -SubnetMask $using:scopeMask
                 Set-DhcpServerV4OptionValue -Router $using:natAddress -DnsServer 168.63.129.16
