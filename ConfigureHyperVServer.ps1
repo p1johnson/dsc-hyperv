@@ -99,11 +99,11 @@ Configuration HyperVServer {
         Script ConfigureHyperVNetwork
         {
             GetScript = {
-                $returnValue = (Get-NetAdapter | Where-Object {$_.name -like "*$switchName)"})
+                $returnValue = (Get-NetAdapter | Where-Object {$_.name -like "*$using:switchName)"})
                 return $returnValue
             }
             TestScript = {
-                if (Get-NetAdapter | Where-Object {$_.name -like "*$switchName)"})
+                if (Get-NetAdapter | Where-Object {$_.name -like "*$using:switchName)"})
                 {
                     return $true
                 }
@@ -113,12 +113,12 @@ Configuration HyperVServer {
                 }
             }
             SetScript = {
-                New-VMSwitch -Name $switchName -SwitchType Internal
-                New-NetNat -Name $switchName -InternalIPInterfaceAddressPrefix $natPrefix
-                $ifIndex = (Get-NetAdapter | Where-Object {$_.name -like "*$switchName)"}).ifIndex
-                New-NetIPAddress -IPAddress $natAddress -InterfaceIndex $ifIndex -PrefixLength $natPrefixLength
-                Add-DhcpServerV4Scope -Name "DHCP-$switchName" -StartRange $scopeStart -EndRange $scopeEnd -SubnetMask $scopeMask
-                Set-DhcpServerV4OptionValue -Router $natAddress -DnsServer $dnsServer
+                New-VMSwitch -Name $using:switchName -SwitchType Internal
+                New-NetNat -Name $using:switchName -InternalIPInterfaceAddressPrefix $using:natPrefix
+                $ifIndex = (Get-NetAdapter | Where-Object {$_.name -like "*$using:switchName)"}).ifIndex
+                New-NetIPAddress -IPAddress $using:natAddress -InterfaceIndex $ifIndex -PrefixLength $using:natPrefixLength
+                Add-DhcpServerV4Scope -Name "DHCP-$using:switchName" -StartRange $using:scopeStart -EndRange $using:scopeEnd -SubnetMask $using:scopeMask
+                Set-DhcpServerV4OptionValue -Router $using:natAddress -DnsServer $using:dnsServer
                 Restart-Service -Name dhcpserver
             }
             DependsOn = '[PendingReboot]Reboot'
