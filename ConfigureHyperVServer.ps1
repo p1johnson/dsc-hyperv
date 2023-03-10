@@ -8,6 +8,14 @@ Configuration HyperVServer {
     #$Interface = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
     #$InterfaceAlias = $($Interface.Name)
 
+    $switchName = "InternalNAT"
+    $natPrefix = "192.168.0.0/24"
+    $natAddress = "192.168.0.1"
+    $natPrefixLength = 24
+    $scopeStart = "192.168.0.50"
+    $scopeEnd = "192.168.0.100"
+    $scopeMask = "255.255.255.0"
+
     Node 'localhost'
 
     {
@@ -85,6 +93,33 @@ Configuration HyperVServer {
         {
             Name = 'Reboot'
             DependsOn = '[WindowsFeature]Hyper-V'
+        }
+
+        Script ConfigureHyperVNetwork
+        {
+            GetScript = {
+                $returnValue = (Get-NetAdapter | Where-Object {$_.name -like "*$using:switchName)"})
+                return $returnValue
+            }
+            TestScript = {
+                if (Get-NetAdapter | Where-Object {$_.name -like "*$using:switchName)"})
+                {
+                    return $true
+                }
+                else 
+                {
+                    return $false
+                }
+            }
+            SetScript = {
+                New-VMSwitch -Name $using:switchName -SwitchType Internal
+                New-NetNat -Name $switchName -InternalIPInterfaceAddressPrefix $using:natPrefix
+                $ifIndex = (Get-NetAdapter | Where-Object {$_.name -like "*$using.switchName)"}).ifIndex
+                New-NetIPAddress -IPAddress $using:natAddress -InterfaceIndex $ifIndex -PrefixLength $using:natPrefixLength
+                Add-DhcpServerV4Scope -Name "DHCP-$using:switchName" -StartRange $using:scopeStart -EndRange $using:scopeEnd -SubnetMask $using:scopeMask
+                Set-DhcpServerV4OptionValue -Router $using:natAddress -DnsServer 168.63.129.16
+                Restart-Service -Name dhcpserver
+            }
         }
     }
 
