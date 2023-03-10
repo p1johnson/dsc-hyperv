@@ -120,6 +120,7 @@ Configuration HyperVServer {
                 Set-DhcpServerV4OptionValue -Router $using:natAddress -DnsServer 168.63.129.16
                 Restart-Service -Name dhcpserver
             }
+            DependsOn = '[PendingReboot]Reboot'
         }
     }
 
